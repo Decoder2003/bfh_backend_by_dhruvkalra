@@ -1,53 +1,36 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
-app.use(cors());
+app.use(express.json());
 
-// POST endpoint
 app.post('/bfhl', (req, res) => {
-    try {
-        const { data } = req.body;
-        if (!Array.isArray(data)) {
-            return res.status(400).json({ is_success: false, message: 'Invalid input' });
-        }
+    const data = req.body.data;
+    const user_id = "dhruv_kalra_13072003";
+    const email = "da4496@srmist.edu.in";
+    const roll_number = "RA2111003030194";
 
-        const numbers = data.filter(item => !isNaN(item));
-        const alphabets = data.filter(item => isNaN(item) && item.length === 1 && /^[a-zA-Z]$/.test(item));
-        const highestAlphabet = alphabets.length ? [alphabets.slice().sort().pop()] : [];
+    const numbers = data.filter(item => !isNaN(item));
+    const alphabets = data.filter(item => isNaN(item));
+    const highest_alphabet = alphabets.length > 0 ? [alphabets.slice().sort().pop()] : [];
 
-        const response = {
-            is_success: true,
-            user_id: "dhruv_kalra_13072003",
-            email: "da4496@srmist.edu.in",
-            roll_number: "RA2111003030194",
-            numbers,
-            alphabets,
-            highest_alphabet: highestAlphabet
-        };
-
-        console.log('POST /bfhl response:', response);
-        res.json(response);
-    } catch (error) {
-        console.error('Error handling POST /bfhl:', error);
-        res.status(500).json({ is_success: false, message: 'Internal Server Error' });
-    }
+    res.json({
+        is_success: true,
+        user_id: user_id,
+        email: email,
+        roll_number: roll_number,
+        numbers: numbers,
+        alphabets: alphabets,
+        highest_alphabet: highest_alphabet
+    });
 });
 
-// GET endpoint
 app.get('/bfhl', (req, res) => {
-    try {
-        const response = { operation_code: 1 };
-        console.log('GET /bfhl response:', response);
-        res.json(response);
-    } catch (error) {
-        console.error('Error handling GET /bfhl:', error);
-        res.status(500).json({ is_success: false, message: 'Internal Server Error' });
-    }
+    res.status(200).json({ operation_code: 1 });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
+
+module.exports = app;
